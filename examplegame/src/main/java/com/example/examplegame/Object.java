@@ -1,8 +1,8 @@
-package com.example.splitimage;
+package com.example.examplegame;
 
 import android.graphics.Bitmap;
 
-public abstract class GameObject {
+public abstract class Object {
 
     protected Bitmap image;
     protected final int rowCount;
@@ -12,7 +12,7 @@ public abstract class GameObject {
     protected final int width;
     protected final int height;
 
-    public GameObject(Bitmap image, int rowCount, int colCount)  {
+    public Object(Bitmap image, int rowCount, int colCount)  {
 
         this.image = image;
         this.rowCount= rowCount;

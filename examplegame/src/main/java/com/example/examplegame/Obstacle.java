@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-public  class Obstacle implements gameObject {
+public  class Obstacle implements GameObject {
 
     private Rect rectangle;
     private Rect rectangle2;

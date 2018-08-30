@@ -1,13 +1,15 @@
 package com.example.examplegame;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
-public class RectPlayer implements gameObject {
+public class RectPlayer implements GameObject {
 
 
     private Rect rectangle;
@@ -27,10 +29,6 @@ public class RectPlayer implements gameObject {
         this.rectangle = rectangle;
         this.color = color;
 
-        BitmapFactory bf=new BitmapFactory();
-        Bitmap idleimg=bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),)
-
-
     }
 
     @Override
@@ -49,6 +47,9 @@ public class RectPlayer implements gameObject {
 
     public void update(Point point) {
         rectangle.set(point.x - rectangle.width() / 2, point.y - rectangle.height() / 2, point.x + rectangle.width() / 2, point.y + rectangle.height() / 2);
+
+
+
     }
 
 }

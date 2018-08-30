@@ -1,10 +1,12 @@
-package com.example.splitimage;
+package com.example.examplegame;
 
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
-public class ChibiCharacter extends Object {
+
+
+public class ChibiCharacter extends  Object {
 
     private static final int ROW_TOP_TO_BOTTOM = 0;
     private static final int ROW_RIGHT_TO_LEFT = 1;

@@ -1,5 +1,7 @@
 package com.example.examplegame;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -8,6 +10,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static Bitmap[] bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +28,12 @@ public class MainActivity extends AppCompatActivity {
         Constants.SCREEN_WIDTH=dm.widthPixels;
         Constants.SCREEN_HEIGHT=dm.heightPixels;
 
-
-
         setContentView(new GamePanel(this));
+
+
+        Bitmap chibiBitmap1 = BitmapFactory.decodeResource(this.getResources(),R.drawable.chibi1);
+        ChibiCharacter chibi1 = new ChibiCharacter(chibiBitmap1);
+        bitmap=chibi1.getMoveBitmaps(1);
 
     }
 }

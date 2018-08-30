@@ -3,7 +3,7 @@ package com.example.examplegame;
 import android.graphics.Canvas;
 
 
-public interface gameObject {
+public interface GameObject {
     public  void draw(Canvas canvas);
     public  void update();
 }

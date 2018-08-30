@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,10 +22,12 @@ import android.widget.ImageView;
  * Created by sonu on 28/03/17.
  */
 
-public class FloatingWidgetService extends Service implements View.OnClickListener {
+public class FloatingWidgetService extends Service {
     private WindowManager mWindowManager;
     private View mFloatingWidgetView, collapsedView, expandedView;
+
     private ImageView remove_image_view;
+
     private Point szWindow = new Point();
     private View removeFloatingWidgetView;
 
@@ -56,17 +59,16 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
         addRemoveView(inflater);
+
         addFloatingWidgetView(inflater);
-        implementClickListeners();
+
         implementTouchListenerToFloatingWidgetView();
     }
-
 
     /*  Add Remove View to Window Manager  */
     private View addRemoveView(LayoutInflater inflater) {
         //Inflate the removing view layout we created
         removeFloatingWidgetView = inflater.inflate(R.layout.remove_floating_widget_layout, null);
-
         //Add the view to the window.
         WindowManager.LayoutParams paramRemove = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -76,7 +78,7 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
                 PixelFormat.TRANSLUCENT);
 
         //Specify the view position
-        paramRemove.gravity = Gravity.TOP | Gravity.LEFT;
+        paramRemove.gravity = Gravity.BOTTOM | Gravity.LEFT;
 
         //Initially the Removing widget view is not visible, so set visibility to GONE
         removeFloatingWidgetView.setVisibility(View.GONE);
@@ -84,6 +86,7 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
         //Add the view to the window
         mWindowManager.addView(removeFloatingWidgetView, paramRemove);
+
         return remove_image_view;
     }
 
@@ -99,12 +102,11 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
-
         //Specify the view position
         params.gravity = Gravity.TOP | Gravity.LEFT;
 
         //Initially view will be added to top-left corner, you change x-y coordinates according to your need
-        params.x = 0;
+        params.x = 100;
         params.y = 100;
 
         //Add the view to the window
@@ -113,8 +115,7 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
         //find id of collapsed view layout
         collapsedView = mFloatingWidgetView.findViewById(R.id.collapse_view);
 
-        //find id of the expanded view layout
-        expandedView = mFloatingWidgetView.findViewById(R.id.expanded_container);
+
     }
 
     private void getWindowManagerDefaultDisplay() {
@@ -136,6 +137,7 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
             boolean isLongClick = false;//variable to judge if user click long press
             boolean inBounded = false;//variable to judge if floating view is bounded to remove view
+
             int remove_img_width = 0, remove_img_height = 0;
 
             Handler handler_longClick = new Handler();
@@ -159,7 +161,6 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
                 //Get Floating widget view params
                 WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) mFloatingWidgetView.getLayoutParams();
-
                 //get the touch location coordinates
                 int x_cord = (int) event.getRawX();
                 int y_cord = (int) event.getRawY();
@@ -170,56 +171,37 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
                     case MotionEvent.ACTION_DOWN:
                         time_start = System.currentTimeMillis();
                         handler_longClick.postDelayed(runnable_longClick, 600);
+
                         remove_img_width = remove_image_view.getLayoutParams().width;
                         remove_img_height = remove_image_view.getLayoutParams().height;
+
                         x_init_cord = x_cord;
                         y_init_cord = y_cord;
                         //remember the initial position.
                         x_init_margin = layoutParams.x;
                         y_init_margin = layoutParams.y;
-
                         return true;
+
                     case MotionEvent.ACTION_UP:
+
                         isLongClick = false;
+
                         removeFloatingWidgetView.setVisibility(View.GONE);
                         remove_image_view.getLayoutParams().height = remove_img_height;
                         remove_image_view.getLayoutParams().width = remove_img_width;
+
                         handler_longClick.removeCallbacks(runnable_longClick);
+
                         //If user drag and drop the floating widget view into remove view then stop the service
                         if (inBounded) {
                             stopSelf();
                             inBounded = false;
                             break;
                         }
-                        //Get the difference between initial coordinate and current coordinate
-                        int x_diff = x_cord - x_init_cord;
-                        int y_diff = y_cord - y_init_cord;
-
-                        //The check for x_diff <5 && y_diff< 5 because sometime elements moves a little while clicking.
-                        //So that is click event.
-                        if (Math.abs(x_diff) < 5 && Math.abs(y_diff) < 5) {
-                            time_end = System.currentTimeMillis();
-
-                            //Also check the difference between start time and end time should be less than 300ms
-                            if ((time_end - time_start) < 300)
-                                onFloatingWidgetClick();
-
-                        }
-                        y_cord_Destination = y_init_margin + y_diff;
-
-                        int barHeight = getStatusBarHeight();
-                        if (y_cord_Destination < 0) {
-                            y_cord_Destination = 0;
-                        } else if (y_cord_Destination + (mFloatingWidgetView.getHeight() + barHeight) > szWindow.y) {
-                            y_cord_Destination = szWindow.y - (mFloatingWidgetView.getHeight() + barHeight);
-                        }
-
-                        layoutParams.y = y_cord_Destination;
-                        inBounded = false;
-                        //reset position if user drags the floating view
-                        resetPosition(x_cord);
-
+                        Log.d("remove_img_height","remove_img_height :"+remove_img_height);
+                        Log.d("remove_img_width","remove_img_width :"+remove_img_width);
                         return true;
+
                     case MotionEvent.ACTION_MOVE:
                         int x_diff_move = x_cord - x_init_cord;
                         int y_diff_move = y_cord - y_init_cord;
@@ -229,12 +211,18 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
                         //If user long click the floating view, update remove view
                         if (isLongClick) {
+
                             int x_bound_left = szWindow.x / 2 - (int) (remove_img_width * 1.5);
                             int x_bound_right = szWindow.x / 2 + (int) (remove_img_width * 1.5);
-                            int y_bound_top = szWindow.y - (int) (remove_img_height * 1.5);
+                            int y_bound_top = (int)(remove_img_height * 1.5);
 
+                            // int y_bound_top = szWindow.y - (int) (remove_img_height * 1.5);
+                            Log.d("bound","x_cord :"+x_cord+" -  x_bound_left :"+x_bound_left+" - x_bound_right :"+x_bound_right+" - y_cord :"+y_cord+" - y_bound_top :"+y_bound_top);
                             //If Floating view comes under Remove View update Window Manager
-                            if ((x_cord >= x_bound_left && x_cord <= x_bound_right) && y_cord >= y_bound_top) {
+                            if ((x_cord >= x_bound_left && x_cord <= x_bound_right) && y_cord <= y_bound_top)
+                            {
+
+
                                 inBounded = true;
 
                                 int x_cord_remove = (int) ((szWindow.x - (remove_img_height * 1.5)) / 2);
@@ -256,59 +244,35 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
                                 //Update the layout with new X & Y coordinate
                                 mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+
                                 break;
-                            } else {
+
+
+                            }
+
+                            // visiable expanded_container...
+                            /*else
+                                {
                                 //If Floating window gets out of the Remove view update Remove view again
                                 inBounded = false;
                                 remove_image_view.getLayoutParams().height = remove_img_height;
                                 remove_image_view.getLayoutParams().width = remove_img_width;
                                 onFloatingWidgetClick();
-                            }
+                            }*/
 
                         }
-
-
                         layoutParams.x = x_cord_Destination;
                         layoutParams.y = y_cord_Destination;
-
                         //Update the layout with new X & Y coordinate
                         mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
                         return true;
+
                 }
                 return false;
             }
         });
     }
 
-    private void implementClickListeners() {
-        mFloatingWidgetView.findViewById(R.id.close_floating_view).setOnClickListener(this);
-        mFloatingWidgetView.findViewById(R.id.close_expanded_view).setOnClickListener(this);
-        mFloatingWidgetView.findViewById(R.id.open_activity_button).setOnClickListener(this);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.close_floating_view:
-                //close the service and remove the from from the window
-                stopSelf();
-                break;
-            case R.id.close_expanded_view:
-                collapsedView.setVisibility(View.VISIBLE);
-                expandedView.setVisibility(View.GONE);
-                break;
-            case R.id.open_activity_button:
-                //open the activity and stop service
-                Intent intent = new Intent(FloatingWidgetService.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-
-                //close the service and remove view from the view hierarchy
-                stopSelf();
-                break;
-        }
-    }
 
     /*  on Floating Widget Long Click, increase the size of remove view as it look like taking focus */
     private void onFloatingWidgetLongClick() {
@@ -398,11 +362,6 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
         }.start();
     }
 
-    /*  Get Bounce value if you want to make bounce effect to your Floating Widget */
-    private double bounceValue(long step, long scale) {
-        double value = scale * Math.exp(-0.055 * step) * Math.cos(0.08 * step);
-        return value;
-    }
 
 
     /*  Detect if the floating view is collapsed or expanded */
@@ -448,17 +407,6 @@ public class FloatingWidgetService extends Service implements View.OnClickListen
 
     }
 
-    /*  on Floating widget click show expanded view  */
-    private void onFloatingWidgetClick() {
-        if (isViewCollapsed()) {
-            //When user clicks on the image view of the collapsed layout,
-            //visibility of the collapsed layout will be changed to "View.GONE"
-            //and expanded view will become visible.
-            collapsedView.setVisibility(View.GONE);
-            expandedView.setVisibility(View.VISIBLE);
-
-        }
-    }
 
     @Override
     public void onDestroy() {

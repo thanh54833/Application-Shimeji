@@ -1,5 +1,6 @@
 package com.example.app_shimeji;
 
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -21,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
+        startFloatingWidgetService();
+    }
     /*  start floating widget service  */
     public void createFloatingWidget(View view) {
         //Check if the application has draw over other apps permission or not?
@@ -37,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         } else
             //If permission is granted start floating widget service
             startFloatingWidgetService();
-
     }
 
     /*  Start Floating widget service and finish current activity */
@@ -60,5 +61,8 @@ public class MainActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-}
 
+
+
+
+}

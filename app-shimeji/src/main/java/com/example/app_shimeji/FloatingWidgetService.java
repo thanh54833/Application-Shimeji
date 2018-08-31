@@ -3,8 +3,10 @@ package com.example.app_shimeji;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -16,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 /**
@@ -30,12 +34,29 @@ public class FloatingWidgetService extends Service {
 
     private Point szWindow = new Point();
     private View removeFloatingWidgetView;
+    private int widthScreen=0;
+    private int heightScreen=0;
+
+    private int withFloating=0;
+    private int heightFloating=0;
 
     private int x_init_cord, y_init_cord, x_init_margin, y_init_margin;
 
     //Variable to check if the Floating widget view is on left side or in right side
     // initially we are displaying Floating widget view to Left side so set it to true
     private boolean isLeft = true;
+
+    private AnimationDrawable progressAnimation;
+
+    //add ...
+    private  WindowManager.LayoutParams layoutParams ;
+
+
+    //Get Floating widget view params
+
+    public void init(){
+
+    }
 
     public FloatingWidgetService() {
     }
@@ -63,12 +84,28 @@ public class FloatingWidgetService extends Service {
         addFloatingWidgetView(inflater);
 
         implementTouchListenerToFloatingWidgetView();
+
+        widthScreen=getScreenWidth();
+        heightScreen=getScreenHeight();
+
+        Log.d("getScreenWidth","getScreenWidth :"+widthScreen+"  -  getScreenHeight :"+heightScreen);
+
+
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
     /*  Add Remove View to Window Manager  */
     private View addRemoveView(LayoutInflater inflater) {
         //Inflate the removing view layout we created
         removeFloatingWidgetView = inflater.inflate(R.layout.remove_floating_widget_layout, null);
+
         //Add the view to the window.
         WindowManager.LayoutParams paramRemove = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -90,10 +127,45 @@ public class FloatingWidgetService extends Service {
         return remove_image_view;
     }
 
+    private int MAX_WIDTH_IMAGE=150;
+    private int MAX_HEIGHT_IMAGE=150;
+    private ImageView mImageViewFilling;
+
     /*  Add Floating Widget View to Window Manager  */
     private void addFloatingWidgetView(LayoutInflater inflater) {
         //Inflate the floating view layout we created
         mFloatingWidgetView = inflater.inflate(R.layout.floating_widget_layout, null);
+
+        layoutParams = (WindowManager.LayoutParams) mFloatingWidgetView.getLayoutParams();
+
+        //add ...
+        mImageViewFilling = (ImageView) mFloatingWidgetView.findViewById(R.id.collapsed_iv);
+        mImageViewFilling.setBackgroundResource(R.drawable.khoc);
+
+        mImageViewFilling.getLayoutParams().width=MAX_WIDTH_IMAGE;
+        mImageViewFilling.getLayoutParams().height=MAX_HEIGHT_IMAGE;
+
+        Log.d("getMax","getMax :"+mImageViewFilling.getMaxWidth()+" - "+ mImageViewFilling.getMaxHeight()+" - "+getStatusBarHeight2());
+
+        progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
+        progressAnimation.start();
+
+        AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+        anim.setDuration(1000);
+        anim.setRepeatCount(1);
+        anim.setRepeatMode(Animation.REVERSE);
+        //mImageViewFilling.startAnimation(anim);
+        ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+        final Handler mHandler = new Handler();
+        Runnable r = new Runnable() {
+
+            public void run() {
+
+                mHandler.postDelayed(this, 1000);
+            }
+        };
+        mHandler.postDelayed(r, 1000);
+
 
         //Add the view to the window.
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -115,7 +187,6 @@ public class FloatingWidgetService extends Service {
         //find id of collapsed view layout
         collapsedView = mFloatingWidgetView.findViewById(R.id.collapse_view);
 
-
     }
 
     private void getWindowManagerDefaultDisplay() {
@@ -127,6 +198,101 @@ public class FloatingWidgetService extends Service {
             szWindow.set(w, h);
         }
     }
+
+    int intergerMax=Integer.MAX_VALUE;
+
+    CountDownTimer timer=new CountDownTimer(intergerMax, 10) {
+        public void onTick(final long millisUntilFinished) {
+
+            int width=getScreenWidth();
+            int height=getScreenHeight();
+            //layoutParams.x =0;
+            //layoutParams.y +=(int)(intergerMax-millisUntilFinished);
+            layoutParams.y +=10;
+            Log.d("time-time","time :"+layoutParams.y +" width :"+width+" height :"+height);
+
+            if(layoutParams.y >height-MAX_HEIGHT_IMAGE-100)
+            {
+                timer.cancel();
+                //add ...
+               new  CountDownTimer(3000, 1000) {
+                   @Override
+                   public void onTick(long l) {
+
+                       mImageViewFilling.setBackgroundResource(R.drawable.te);
+                       Log.d("getMax","getMax :"+mImageViewFilling.getMaxWidth()+" - "+ mImageViewFilling.getMaxHeight()+" - "+getStatusBarHeight2());
+
+                       progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
+                       progressAnimation.start();
+
+                       AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                       anim.setDuration(1000);
+                       anim.setRepeatCount(1);
+                       anim.setRepeatMode(Animation.REVERSE);
+                       //mImageViewFilling.startAnimation(anim);
+                       ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+                       final Handler mHandler = new Handler();
+                       Runnable r = new Runnable() {
+                           public void run() {
+                               mHandler.postDelayed(this, 1000);
+                           }
+                       };
+                       mHandler.postDelayed(r, 1000);
+                       Log.d("resule","resule +"+millisUntilFinished);
+
+                   }
+                   @Override
+                   public void onFinish() {
+
+                       mImageViewFilling.setBackgroundResource(R.drawable.khoc);
+                       Log.d("getMax","getMax :"+mImageViewFilling.getMaxWidth()+" - "+ mImageViewFilling.getMaxHeight()+" - "+getStatusBarHeight2());
+
+                       progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
+                       progressAnimation.start();
+
+                       AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                       anim.setDuration(1000);
+                       anim.setRepeatCount(1);
+                       anim.setRepeatMode(Animation.REVERSE);
+                       //mImageViewFilling.startAnimation(anim);
+                       ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+                       final Handler mHandler = new Handler();
+                       Runnable r = new Runnable() {
+                           public void run() {
+                               mHandler.postDelayed(this, 1000);
+                           }
+                       };
+                       mHandler.postDelayed(r, 1000);
+
+
+                   }
+               }.start();
+
+            }
+
+            mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+        }
+        public void onFinish() {
+        }
+    };
+
+
+    CountDownTimer timerAuto=new CountDownTimer(intergerMax, 10) {
+        public void onTick(final long millisUntilFinished) {
+
+            int width=getScreenWidth();
+            int height=getScreenHeight();
+            //layoutParams.x =0;
+            //layoutParams.y +=(int)(intergerMax-millisUntilFinished);
+            layoutParams.y +=10;
+            Log.d("time-time","time :"+layoutParams.y +" width :"+width+" height :"+height);
+
+            mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+
+        }
+        public void onFinish() {
+        }
+    };
 
     /*  Implement Touch Listener to Floating Widget Root View  */
     private void implementTouchListenerToFloatingWidgetView() {
@@ -159,13 +325,15 @@ public class FloatingWidgetService extends Service {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                //Get Floating widget view params
-                WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) mFloatingWidgetView.getLayoutParams();
+                layoutParams = (WindowManager.LayoutParams) mFloatingWidgetView.getLayoutParams();
+
                 //get the touch location coordinates
                 int x_cord = (int) event.getRawX();
                 int y_cord = (int) event.getRawY();
-
                 int x_cord_Destination, y_cord_Destination;
+
+                //add ...
+
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -180,18 +348,18 @@ public class FloatingWidgetService extends Service {
                         //remember the initial position.
                         x_init_margin = layoutParams.x;
                         y_init_margin = layoutParams.y;
+
+                        timer.cancel();
+
                         return true;
 
                     case MotionEvent.ACTION_UP:
 
                         isLongClick = false;
-
                         removeFloatingWidgetView.setVisibility(View.GONE);
                         remove_image_view.getLayoutParams().height = remove_img_height;
                         remove_image_view.getLayoutParams().width = remove_img_width;
-
                         handler_longClick.removeCallbacks(runnable_longClick);
-
                         //If user drag and drop the floating widget view into remove view then stop the service
                         if (inBounded) {
                             stopSelf();
@@ -200,6 +368,12 @@ public class FloatingWidgetService extends Service {
                         }
                         Log.d("remove_img_height","remove_img_height :"+remove_img_height);
                         Log.d("remove_img_width","remove_img_width :"+remove_img_width);
+                        if(( layoutParams.y+MAX_HEIGHT_IMAGE)<( heightScreen-getStatusBarHeight()-100 ))
+                        {
+                            timer.cancel();
+                            timer.start();
+                        }
+
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
@@ -211,20 +385,15 @@ public class FloatingWidgetService extends Service {
 
                         //If user long click the floating view, update remove view
                         if (isLongClick) {
-
                             int x_bound_left = szWindow.x / 2 - (int) (remove_img_width * 1.5);
                             int x_bound_right = szWindow.x / 2 + (int) (remove_img_width * 1.5);
                             int y_bound_top = (int)(remove_img_height * 1.5);
-
                             // int y_bound_top = szWindow.y - (int) (remove_img_height * 1.5);
                             Log.d("bound","x_cord :"+x_cord+" -  x_bound_left :"+x_bound_left+" - x_bound_right :"+x_bound_right+" - y_cord :"+y_cord+" - y_bound_top :"+y_bound_top);
                             //If Floating view comes under Remove View update Window Manager
                             if ((x_cord >= x_bound_left && x_cord <= x_bound_right) && y_cord <= y_bound_top)
                             {
-
-
                                 inBounded = true;
-
                                 int x_cord_remove = (int) ((szWindow.x - (remove_img_height * 1.5)) / 2);
                                 int y_cord_remove = (int) (szWindow.y - ((remove_img_width * 1.5) + getStatusBarHeight()));
 
@@ -244,25 +413,25 @@ public class FloatingWidgetService extends Service {
 
                                 //Update the layout with new X & Y coordinate
                                 mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
-
                                 break;
-
-
                             }
 
-                            // visiable expanded_container...
-                            /*else
-                                {
-                                //If Floating window gets out of the Remove view update Remove view again
-                                inBounded = false;
-                                remove_image_view.getLayoutParams().height = remove_img_height;
-                                remove_image_view.getLayoutParams().width = remove_img_width;
-                                onFloatingWidgetClick();
-                            }*/
+                            if(( layoutParams.y+MAX_HEIGHT_IMAGE)<( heightScreen-getStatusBarHeight()-100 ))
+                            {
+                                mImageViewFilling.setBackgroundResource(R.drawable.shime4);
+                            }
+
+
+                            if(x_cord_Destination>=0&&x_cord_Destination<=widthScreen-200&&y_cord_Destination<=heightScreen-200)
+                            {
+                                layoutParams.x = x_cord_Destination;
+                                layoutParams.y = y_cord_Destination;
+                            }
+
 
                         }
-                        layoutParams.x = x_cord_Destination;
-                        layoutParams.y = y_cord_Destination;
+
+                        Log.d("layoutParams"," layoutParams.x  :"+ layoutParams.x +" - layoutParams.y :"+layoutParams.y);
                         //Update the layout with new X & Y coordinate
                         mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
                         return true;
@@ -272,7 +441,6 @@ public class FloatingWidgetService extends Service {
             }
         });
     }
-
 
     /*  on Floating Widget Long Click, increase the size of remove view as it look like taking focus */
     private void onFloatingWidgetLongClick() {
@@ -300,7 +468,15 @@ public class FloatingWidgetService extends Service {
             isLeft = false;
             moveToRight(x_cord_now);
         }
+    }
 
+    private int getStatusBarHeight2() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
 
@@ -386,7 +562,6 @@ public class FloatingWidgetService extends Service {
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) mFloatingWidgetView.getLayoutParams();
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
 
             if (layoutParams.y + (mFloatingWidgetView.getHeight() + getStatusBarHeight()) > szWindow.y) {
                 layoutParams.y = szWindow.y - (mFloatingWidgetView.getHeight() + getStatusBarHeight());

@@ -10,31 +10,31 @@
         android:id="@+id/root_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <!--  View while view is collapsed  -->
-
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/collapse_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible">
-
             <!--   ImageView of floating widget  -->
             <ImageView
                 android:id="@+id/collapsed_iv"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/colorPrimaryDark"
-                android:src="@drawable/ic_launcher_foreground"
-                tools:ignore="ContentDescription" />
-
-
-        </RelativeLayout>
-
+                android:src="#7123"
+                android:layout_gravity="top"
+                />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:background="#000"
+                android:layout_gravity="bottom"
+                />
+        </FrameLayout>
 
     </RelativeLayout>
-
 
 </FrameLayout>

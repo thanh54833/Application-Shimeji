@@ -28,7 +28,7 @@
                 android:layout_gravity="top"
                 />
             <ImageView
-                android:layout_width="100dp"
+                android:layout_width="50dp"
                 android:layout_height="2dp"
                 android:background="#000"
                 android:layout_gravity="bottom"

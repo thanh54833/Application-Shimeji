@@ -22,13 +22,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * Created by sonu on 28/03/17.
@@ -120,8 +118,13 @@ public class FloatingWidgetService extends Service implements SensorEventListene
             int width = getScreenWidth();
             int height = getScreenHeight();
 
+
+            //layoutParams.x=200;
             layoutParams.y -= 1;
-            Log.d("time-time", "time :" + layoutParams.y + " width :" + width + " height :" + height);
+            if (layoutParams.y <= 0)
+            {
+                movingBotTop.cancel();
+            }
 
             mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
 
@@ -135,16 +138,35 @@ public class FloatingWidgetService extends Service implements SensorEventListene
     private int record_Status=0;
 
     public void init() {
+
         final Handler mHandler = new Handler();
 
             Runnable r = new Runnable() {
                 public void run() {
                     mHandler.postDelayed(this, 1000);
 
-                    //movoing bot - top...
-                    Log.d("layoutParams.x","layoutParams.x :"+layoutParams.x);
+                    if(layoutParams.y<=0){
 
-                    if(layoutParams.x==0) {
+                        recoderLocation="TOP";
+                        record_Status=0;
+                        movingBotTop.cancel();
+
+                        Log.d("TOP","TOP");
+
+                    }
+                    else {
+
+                        recoderLocation="BOTTOM";
+                        Log.d("TOP","BOTTOM");
+                    }
+
+                    //movoing bot - top...
+                    Log.d("layoutParams.x","layoutParams.x :"+layoutParams.y);
+
+                    if(layoutParams.x==0&&layoutParams.y>0) {
+
+                        Log.d("action","bot - top ");
+
                         // add ...
                         RECORD="NOTOUCH";
 
@@ -152,7 +174,7 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                         mImageViewFilling.clearAnimation();
 
 
-                        mImageViewFilling.setBackgroundResource(R.drawable.bobt);
+                        mImageViewFilling.setBackgroundResource(R.drawable.bobtl);
 
                         //margin left image ...
                         FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
@@ -178,84 +200,147 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                         };
                         mHandler.postDelayed(r, 1000);
                         // add
-                        if (layoutParams.y >100) {
+                        if (layoutParams.y >=0) {
+
                             if (record_Status == 0) {
                                 record_Status = 1;
 
+                                //layoutParams.x-=200;
                                 movingBotTop.cancel();
                                 movingBotTop.start();
                             }
+
                         } else {
                             movingBotTop.cancel();
-
                             //mImageViewFilling.clearAnimation();
                         }
                         //Log.d("status","status :"+record_Status);
                         mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
                     }
-
-                    if((layoutParams.x+MAX_WIDTH_IMAGE)>=getScreenWidth())
+                    // moving bot - top ...
+                    else if((layoutParams.x+MAX_WIDTH_IMAGE)>=getScreenWidth()&&layoutParams.y>0)
                     {
 
-                        RECORD="NOTOUCH";
+                        Log.d("action","bot - top ");
 
-                        Log.d("handler", "layoutParams.x :" + layoutParams.x + " - layoutParams.y :" + layoutParams.y + " - full :");
-                        mImageViewFilling.clearAnimation();
+                        if (record_Status == 0) {
+                            record_Status = 1;
 
-                        mImageViewFilling.setBackgroundResource(R.drawable.bobt);
+                            RECORD = "NOTOUCH";
+                            layoutParams.x = getScreenWidth() - MAX_WIDTH_IMAGE + 62;//getScreenWidth()-MAX_WIDTH_IMAGE;
 
-                        //margin left image ...
-                        FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
-                        layoutParamsImage.setMargins(-62, 1, 1, 1);
-                        mImageViewFilling.setLayoutParams(layoutParamsImage);
+                            Log.d("handler", "layoutParams.x 1:" + layoutParams.x + " - layoutParams.y :" + layoutParams.y + " - full :");
+                            mImageViewFilling.clearAnimation();
 
-                        Log.d("getMax", "getMax :" + mImageViewFilling.getMaxWidth() + " - " + mImageViewFilling.getMaxHeight() + " - " + getStatusBarHeight2());
+                            mImageViewFilling.setBackgroundResource(R.drawable.bobtr);
 
-                        progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
-                        progressAnimation.start();
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, 1, -62, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
 
-                        AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-                        anim.setDuration(1000);
-                        anim.setRepeatCount(1);
-                        anim.setRepeatMode(Animation.REVERSE);
-                        ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+                            Log.d("getMax", "getMax :" + mImageViewFilling.getMaxWidth() + " - " + mImageViewFilling.getMaxHeight() + " - " + getStatusBarHeight2());
 
-                        final Handler mHandler = new Handler();
-                        Runnable r = new Runnable() {
-                            public void run() {
-                                mHandler.postDelayed(this, 1000);
-                            }
-                        };
-                        mHandler.postDelayed(r, 1000);
-                        // add
-                        if (layoutParams.y >100) {
-                            if (record_Status == 0) {
+                            progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
+                            progressAnimation.start();
 
-                                record_Status = 1;
+                            AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                            anim.setDuration(1000);
+                            anim.setRepeatCount(1);
+                            anim.setRepeatMode(Animation.REVERSE);
+                            ((AnimationDrawable) mImageViewFilling.getBackground()).start();
 
+                            final Handler mHandler = new Handler();
+                            Runnable r = new Runnable() {
+                                public void run() {
+                                    mHandler.postDelayed(this, 1000);
+                                }
+                            };
+
+                            mHandler.postDelayed(r, 1000);
+
+                            // add
+                            if (layoutParams.y >= 0) {
+
+                                //layoutParams.x=100;
                                 movingBotTop.cancel();
                                 movingBotTop.start();
+                                Log.d("start123456", "start +++ ");
 
+                            } else {
+                                movingBotTop.cancel();
+                                //mImageViewFilling.clearAnimation();
                             }
-                        } else {
+
+                            //Log.d("status","status :"+record_Status);
+                            mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+
+                        }
+
+                    }
+                    // Top to left , right ...
+                    else  if(layoutParams.y<=0&&layoutParams.x<=0||layoutParams.y<=0&&(layoutParams.x+MAX_WIDTH_IMAGE)>=getScreenWidth())//(layoutParams.x+MAX_WIDTH_IMAGE)>=getScreenWidth())
+                    {
+                        Log.d("action","Top to left - right ");
+
+                        if(record_Status==0) {
+
+                            record_Status=1;
 
                             movingBotTop.cancel();
 
-                            //mImageViewFilling.clearAnimation();
-                        }
-                        //Log.d("status","status :"+record_Status);
-                        mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+                            //record_Status=1;
 
+                            RECORD = "TOUCH";
+
+                            timer.cancel();
+                            //layoutParams.y=0;
+                            Log.d("handler", "layoutParams.x 1:" + layoutParams.x + " - layoutParams.y :" + layoutParams.y + " - full :");
+                            mImageViewFilling.clearAnimation();
+
+                            mImageViewFilling.setBackgroundResource(R.drawable.botrl);
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, -45, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+
+                            Log.d("getMax", "getMax :" + mImageViewFilling.getMaxWidth() + " - " + mImageViewFilling.getMaxHeight() + " - " + getStatusBarHeight2());
+
+                            progressAnimation = (AnimationDrawable) mImageViewFilling.getBackground();
+                            progressAnimation.start();
+
+                            AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                            anim.setDuration(1000);
+                            anim.setRepeatCount(1);
+                            anim.setRepeatMode(Animation.REVERSE);
+
+                            ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+
+                            final Handler mHandler = new Handler();
+                            Runnable r = new Runnable() {
+                                public void run() {
+                                    mHandler.postDelayed(this, 1000);
+                                }
+                            };
+
+                            mHandler.postDelayed(r, 1000);
+                            mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+
+
+                        }
                     }
+
                     else {
 
                         record_Status = 0;
                         movingBotTop.cancel();
+
                         RECORD="TOUCH";
 
                     }
                     //
 
+                    Log.d("log","record_Status :"+record_Status+" - RECORD :"+RECORD+" - layoutParams.x :"+layoutParams.x+" - layoutParams.y :"+layoutParams.y);
 
 
                 }
@@ -318,8 +403,7 @@ public class FloatingWidgetService extends Service implements SensorEventListene
         mImageViewFilling = (ImageView) mFloatingWidgetView.findViewById(R.id.collapsed_iv);
         mImageViewFilling.clearAnimation();
 
-
-        mImageViewFilling.setBackgroundResource(R.drawable.khoc);
+        mImageViewFilling.setBackgroundResource(R.drawable.botrl);
 
         //margin left image ...
         FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
@@ -440,8 +524,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                     public void onFinish() {
 
                         mImageViewFilling.clearAnimation();
-
-
                         mImageViewFilling.setBackgroundResource(R.drawable.khoc);
                         //margin left image ...
                         FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
@@ -467,7 +549,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                             }
                         };
                         mHandler.postDelayed(r, 1000);
-
 
                     }
                 }.start();
@@ -536,6 +617,8 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                 int x_cord_Destination, y_cord_Destination;
 
                 //add ...
+                RECORD="NOTOUCH";
+
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         time_start = System.currentTimeMillis();
@@ -549,6 +632,7 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                         //remember the initial position.
                         x_init_margin = layoutParams.x;
                         y_init_margin = layoutParams.y;
+
                         timer.cancel();
 
                         return true;
@@ -567,17 +651,29 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                             break;
                         }
 
-                        Log.d("remove_img_height", "remove_img_height :" + remove_img_height);
-                        Log.d("remove_img_width", "remove_img_width :" + remove_img_width);
+                        Log.d("remove_img_height", "remove_img_height :" + layoutParams.y);
+                        Log.d("remove_img_width", "remove_img_width :" + layoutParams.y);
 
-                        if ((layoutParams.y + MAX_HEIGHT_IMAGE) < (heightScreen - getStatusBarHeight() - 100)) {
+                        //if ((layoutParams.y + MAX_HEIGHT_IMAGE) < (heightScreen - getStatusBarHeight() - 100)) {
+                        if (true)//layoutParams.y>=0)
+                        {
+
                             timer.cancel();
                             timer.start();
+
+                            mImageViewFilling.clearAnimation();
+                            mImageViewFilling.setBackgroundResource(R.drawable.shime4);
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, 1, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+
                         }
 
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
+
                         int x_diff_move = x_cord - x_init_cord;
                         int y_diff_move = y_cord - y_init_cord;
 
@@ -616,10 +712,10 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                                 mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
                                 break;
                             }
+
                             if ((layoutParams.y + MAX_HEIGHT_IMAGE) < (heightScreen - getStatusBarHeight() - 100)) {
 
                                 mImageViewFilling.clearAnimation();
-
 
                                 mImageViewFilling.setBackgroundResource(R.drawable.shime4);
                                 //margin left image ...
@@ -627,23 +723,28 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                                 layoutParamsImage.setMargins(1, 1, 1, 1);
                                 mImageViewFilling.setLayoutParams(layoutParamsImage);
 
-
                             }
                             if (x_cord_Destination >= 0 && x_cord_Destination <= widthScreen - 200 && y_cord_Destination <= heightScreen - 200) {
                                 layoutParams.x = x_cord_Destination;
                                 layoutParams.y = y_cord_Destination;
                             }
+
+
                         }
                         Log.d("layoutParams", " layoutParams.x  :" + layoutParams.x + " - layoutParams.y :" + layoutParams.y);
                         //Update the layout with new X & Y coordinate
                         mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
                         return true;
+
                 }
                 return false;
+
+
+
+
             }
         });
     }
-
     /*  on Floating Widget Long Click, increase the size of remove view as it look like taking focus */
     private void onFloatingWidgetLongClick() {
         //Get remove Floating view params
@@ -660,7 +761,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
         //Update Remove view params
         mWindowManager.updateViewLayout(removeFloatingWidgetView, removeParams);
     }
-
     /*  Reset position of Floating Widget view on dragging  */
     private void resetPosition(int x_cord_now) {
         if (x_cord_now <= szWindow.x / 2) {
@@ -671,7 +771,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
             moveToRight(x_cord_now);
         }
     }
-
     private int getStatusBarHeight2() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -680,8 +779,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
         }
         return result;
     }
-
-
     /*  Method to move the Floating widget view to Left  */
     private void moveToLeft(final int current_x_cord) {
         final int x = szWindow.x - current_x_cord;
@@ -798,6 +895,9 @@ public class FloatingWidgetService extends Service implements SensorEventListene
     private int cut=5;
     private int cord=3;
     private int time=6;
+
+    private String recoderLocation="";
+
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
@@ -805,6 +905,8 @@ public class FloatingWidgetService extends Service implements SensorEventListene
 
             movingSenser = (int) sensorEvent.values[0];
             if (movingSenser > 0) {
+
+
                 if (movingSenser > cord) {
                     recordSensor += 1;
                     if (recordSensor > time) {
@@ -815,12 +917,28 @@ public class FloatingWidgetService extends Service implements SensorEventListene
 
                         mImageViewFilling.clearAnimation();
 
+                        if(recoderLocation.equals("TOP"))
+                        {
+                            mImageViewFilling.setBackgroundResource(R.drawable.botrl);
 
-                        mImageViewFilling.setBackgroundResource(R.drawable.boleft);
-                        //margin left image ...
-                        FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
-                        layoutParamsImage.setMargins(1, 1, 1, 1);
-                        mImageViewFilling.setLayoutParams(layoutParamsImage);
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, -45, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+
+                        }
+                        else {
+
+                            mImageViewFilling.setBackgroundResource(R.drawable.boleft);
+
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, 1, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+
+                        }
+
+
 
                         Log.d("getMax", "getMax :" + mImageViewFilling.getMaxWidth() + " - " + mImageViewFilling.getMaxHeight() + " - " + getStatusBarHeight2());
 
@@ -856,8 +974,13 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                 } else {
                     recordSensor = 0;
                 }
+
+
+
             } else {
                 if (Math.abs(movingSenser) > cord) {
+
+
                     recordSensor += 1;
                     if (recordSensor > time) {
                         if (recordSensor > 15) {
@@ -868,12 +991,26 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                         mImageViewFilling.clearAnimation();
 
 
-                        mImageViewFilling.setBackgroundResource(R.drawable.boright);
+                        if(recoderLocation.equals("TOP"))
+                        {
+                            mImageViewFilling.setBackgroundResource(R.drawable.botlr);
 
-                        //margin left image ...
-                        FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
-                        layoutParamsImage.setMargins(1, 1, 1, 1);
-                        mImageViewFilling.setLayoutParams(layoutParamsImage);
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, -45, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+                        }
+                        else {
+                            mImageViewFilling.setBackgroundResource(R.drawable.boright);
+
+                            //margin left image ...
+                            FrameLayout.LayoutParams layoutParamsImage = (FrameLayout.LayoutParams) mImageViewFilling.getLayoutParams();
+                            layoutParamsImage.setMargins(1, 1, 1, 1);
+                            mImageViewFilling.setLayoutParams(layoutParamsImage);
+
+                        }
+
+
 
                         Log.d("getMax", "getMax :" + mImageViewFilling.getMaxWidth() + " - " + mImageViewFilling.getMaxHeight() + " - " + getStatusBarHeight2());
 
@@ -908,6 +1045,8 @@ public class FloatingWidgetService extends Service implements SensorEventListene
                         }
 
                         mWindowManager.updateViewLayout(mFloatingWidgetView, layoutParams);
+
+
 
 
                     }

@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+
         startFloatingWidgetService();
     }
     /*  start floating widget service  */
@@ -43,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     /*  Start Floating widget service and finish current activity */
     private void startFloatingWidgetService() {
-        startService(new Intent(MainActivity.this, FloatingWidgetService.class));
+        startService(new Intent(MainActivity.this, Floating.class));
+        //startService(new Intent(MainActivity.this, FloatingWidgetService.class));
         finish();
     }
 
@@ -52,16 +56,31 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE) {
                 //Check if the permission is granted or not.
             if (resultCode == RESULT_OK)
+
                 //If permission granted start floating widget service
                 startFloatingWidgetService();
+
+
             else
+
                 //Permission is not available then display toast
                 Toast.makeText(this,"Not available then display toast", Toast.LENGTH_SHORT).show();
+
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
+
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
 
 
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/root_container1"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        tools:ignore="UselessParent">
+
+        <RelativeLayout
+            android:id="@+id/collapse_view1"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true">
+            <!--Icon of floating widget -->
+            <ImageView
+                android:id="@+id/filling1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/cay"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

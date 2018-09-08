@@ -348,8 +348,6 @@ public class FloatingWidgetService extends Service implements SensorEventListene
             mHandler.postDelayed(r, 1000);
 
 
-
-
     }
     public static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;

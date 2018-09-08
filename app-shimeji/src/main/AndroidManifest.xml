@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <service android:name=".FloatingWidgetService" android:exported="false" android:enabled="true"/>
+        <service android:name=".Floating" android:exported="false" android:enabled="true"/>
     </application>
 
 </manifest>

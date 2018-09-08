@@ -24,11 +24,13 @@ public  class Obstacle implements GameObject {
         this.color=color;
 
         rectangle=new Rect(0,startY,startX,startY+rectHeight);
+
         rectangle2=new Rect(startX+playerGap,startY,Constants.SCREEN_HEIGHT,startY+rectHeight);
 
     }
 
-    public  Rect getRectangle(){
+    public  Rect getRectangle()
+    {
         return rectangle;
     }
     public boolean playerCollide(RectPlayer player)
@@ -55,11 +57,15 @@ public  class Obstacle implements GameObject {
 
     @Override
     public void draw(Canvas canvas) {
-        Paint paint=new Paint();
-        paint.setColor(color);
-        canvas.drawRect(rectangle,paint);
-        canvas.drawRect(rectangle2,paint);
 
+
+        Paint paint=new Paint();
+
+        paint.setColor(color);
+
+        canvas.drawRect(rectangle,paint);
+
+        canvas.drawRect(rectangle2,paint);
 
     }
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="400dp"
+    android:layout_height="400dp"
 
     >
 
@@ -10,16 +10,16 @@
 
     <RelativeLayout
         android:id="@+id/root_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
 
         >
 
         <!--  View while view is collapsed  -->
         <FrameLayout
             android:id="@+id/collapse_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
             android:orientation="vertical"
             android:background="#7123"
             android:visibility="visible">
@@ -31,13 +31,11 @@
                 android:background="@color/colorPrimaryDark"
                 android:layout_gravity="top"
                 />
-
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="2dp"
                 android:layout_gravity="bottom"
                 />
-
         </FrameLayout>
 
     </RelativeLayout>

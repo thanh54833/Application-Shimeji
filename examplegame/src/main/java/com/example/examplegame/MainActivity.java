@@ -23,17 +23,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        DisplayMetrics  dm=new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        Constants.SCREEN_WIDTH=dm.widthPixels;
-        Constants.SCREEN_HEIGHT=dm.heightPixels;
-
         setContentView(new GamePanel(this));
-
-
-        Bitmap chibiBitmap1 = BitmapFactory.decodeResource(this.getResources(),R.drawable.chibi1);
-        ChibiCharacter chibi1 = new ChibiCharacter(chibiBitmap1);
-        bitmap=chibi1.getMoveBitmaps(1);
-
     }
 }

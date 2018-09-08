@@ -1,14 +1,9 @@
-package com.example.examplegame;
+package com.example.app_shimeji;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.Log;
 
 public class RectPlayer implements GameObject {
 
@@ -54,10 +49,6 @@ public class RectPlayer implements GameObject {
 
         Paint paint = new Paint();
         paint.setColor(color);
-
-
-
-
         canvas.drawRect(rectangle, paint);
     }
 

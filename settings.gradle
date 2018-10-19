@@ -1,0 +1,1 @@
+include ':app', ':mylibrary', ':floatingapp', ':examplegame', ':splitimage', ':recordaudio', ':app-shimeji', ':appsensor', ':test-commit'

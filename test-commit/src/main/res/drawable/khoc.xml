@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime5"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime6"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime7"/>
+
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime8"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime9"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime10"/>
+
+</animation-list>

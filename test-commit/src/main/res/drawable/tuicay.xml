@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+
+
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime38"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime39"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime40"/>
+
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime41"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime42"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime43"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime44"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime45"/>
+    <item
+        android:duration="500"
+        android:drawable="@drawable/shime46"/>
+
+</animation-list>

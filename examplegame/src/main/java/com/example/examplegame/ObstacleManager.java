@@ -36,15 +36,30 @@ public class ObstacleManager {
     private void populateObstacles(){
 
         int currY=-(5*Constants.SCREEN_HEIGHT/4);
-
-        while (currY<0){
-            int xStart=(int)(Math.random()*(Constants.SCREEN_WIDTH-playerGap));
-            obstacles.add(new Obstacle(obstacleHeight,color,xStart,currY,playerGap));
-            currY+=obstacleHeight+obstacleGap;
-        }
+        currY=-600;
         if(BuildConfig.DEBUG){
-            Log.d("currY","+currY ="+currY);
+            Log.d("currY","+currY 1="+currY);
         }
+
+       /* while (currY<0){
+
+            int xStart=(int)(Math.random()*(Constants.SCREEN_WIDTH-playerGap));
+
+            //obstacles.add(new Obstacle(obstacleHeight,color,xStart,currY,playerGap));
+
+            obstacles.add(new Obstacle(10,1,10,20,10));
+
+            //currY+=obstacleHeight+obstacleGap;
+
+            currY+=200;
+
+            if(BuildConfig.DEBUG){
+
+                Log.d("currY","+currY 1="+currY+" - obstacleHeight :"+obstacleHeight+" - color :"+color+" - xStart :"+xStart+" - currY :"+currY+" - playerGap :"+playerGap);
+            }
+
+        }*/
+
 
     }
 

@@ -144,6 +144,8 @@ public class GameplayScene implements Scene {
     public void recieveTouch(MotionEvent event) {
 
         switch (event.getAction()){
+
+
             /*case MotionEvent.ACTION_DOWN:
                 if(!gameOver&&player.getRectangle().contains((int)event.getX(),(int)event.getY()))
                 {
@@ -164,6 +166,9 @@ public class GameplayScene implements Scene {
             case MotionEvent.ACTION_UP:
                 movingPlayer=false;
                 break;*/
+
+
+
         }
     }
 

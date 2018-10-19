@@ -2,6 +2,7 @@ package com.example.app_shimeji;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -39,22 +40,32 @@ public  class Obstacle implements GameObject {
 
     }
 
-    public  Obstacle(int rectHeight,int color,int startX,int startY,int playerGap){
+    /*public  Obstacle(int rectHeight,int color,int startX,int startY,int playerGap){
 
         this.color=color;
 
         //rectangle=new Rect(0,startY,startX,startY+rectHeight);
         //rectangle2=new Rect(startX+100,startY,Constants.SCREEN_HEIGHT,startY+rectHeight);
 
-        rectangle=new Rect(getScreenWidth()-40,0,getScreenWidth(),100);
+        rectangle=new Rect(getScreenWidth()-10,0,getScreenWidth(),100);
 
-        rectangle2=new Rect(getScreenWidth()-40,200,getScreenWidth(),400);
+        rectangle2=new Rect(getScreenWidth()-10,200,getScreenWidth(),400);
 
 
         /*rectangle11=new Rect(getScreenWidth()/2-40,0,getScreenWidth()/2,100);
-
         rectangle22=new Rect(getScreenWidth()/2-40,200,getScreenWidth()/2,400);*/
 
+
+    /*}*/
+
+    public  Obstacle(){
+
+        this.color= Color.WHITE;
+
+
+        rectangle=new Rect(getScreenWidth()-10,0,getScreenWidth(),100);
+
+        rectangle2=new Rect(getScreenWidth()-10,200,getScreenWidth(),400);
 
     }
     public  Rect getRectangle(){
@@ -88,6 +99,7 @@ public  class Obstacle implements GameObject {
 
         canvas.drawRect(rectangle,paint);
         canvas.drawRect(rectangle2,paint);
+
         // cut ...
         /*canvas.drawRect(rectangle11,paint);
         canvas.drawRect(rectangle22,paint);*/
